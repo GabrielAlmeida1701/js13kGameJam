@@ -1,0 +1,11 @@
+body {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    overflow: hidden;
+    background-color: black
+}
+canvas {
+    background-color: rgb(38, 38, 94);
+    margin: auto;
+}
