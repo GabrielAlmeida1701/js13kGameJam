@@ -1,10 +1,11 @@
-const { src, dest, parallel } = require('gulp');
+const { parallel } = require('gulp');
 var gulp          = require('gulp'),
     concat        = require('gulp-concat'),
     minifyCSS     = require('gulp-minify-css'),
-    uglify        = require('gulp-uglify'),
+    minifyJS      = require('gulp-terser'),
+    through       = require('through2'),
+    cminify       = require('./minify'),
 
-    serveDir = './src',
     distPaths = {
         build: 'build',
         js_build_file: 'game.min.js',
@@ -35,6 +36,14 @@ function css () {
 function js () {
     return gulp.src(sourcePaths.js)
         .pipe(concat(distPaths.js_build_file))
+        .pipe(through.obj(function (file, enc, cb) {
+            let content = file.contents.toString()
+            let result = cminify.replaceCommunItens(content)
+            file.contents = new Buffer(result)
+            
+            cb(null, file)
+        }))
+        .pipe(minifyJS())
         .pipe(gulp.dest(distPaths.build));
 };
 
