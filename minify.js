@@ -35,5 +35,9 @@ content = content
             .replace(/PhysicsEntity.DYNAMIC/g, '1').replace(/PhysicsEntity.STATIC/g, '0')
             .replace(/PhysicsEntity = { STATIC: 0, DYNAMIC: 1 }/g, '')
 
+            //Remove stats ref
+            .replace(/var stats = new Stats\(\);/g, '').replace(/stats.showPanel\(1\);/g, '')
+            .replace(/document.body.appendChild\(stats.dom\);/g, '').replace(/stats.begin\(\);/g, '').replace(/stats.end\(\);/g, '')
+
 fs.writeFileSync(jsFile, content)
 console.log('Done!')

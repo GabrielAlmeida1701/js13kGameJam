@@ -1,3 +1,7 @@
+var stats = new Stats();
+stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom);
+
 var inLoop = false
 
 var canvas = document.getElementById('cv')
@@ -35,6 +39,8 @@ start = () => {
 }
 
 update = () => {
+	stats.begin();
+	
     elements.forEach(elem => { elem.update(); Physics.calcCollisions(player.elem, elem) })
     tileMap.solvePhysics()
 
@@ -45,6 +51,7 @@ update = () => {
     tileMap.render()
     elements.forEach(elem => elem.render())
     
+	stats.end();
     if(!inLoop) alert('bye!')
     else window.requestAnimationFrame(update)
 }
