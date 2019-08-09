@@ -1,6 +1,6 @@
-// var stats = new Stats();
-// stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
-// document.body.appendChild(stats.dom);
+var stats = new Stats();
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom);
 
 var inLoop = false
 
@@ -12,22 +12,39 @@ var ctx = canvas.getContext('2d')
 ctx.imageSmoothingEnabled = false
 Context2D = ctx
 
-var tileMap = new TileMap()
-var player = new Player()
-elements = [
-    new Coin(495, SCREEN_HEIGHT - 800).elem,
-    new Coin(600, SCREEN_HEIGHT - 300).elem,
-    player.elem,
+coins = [
+    [495, SCREEN_HEIGHT - 150, 1],
+    [300, 20, 1],
+    [500, SCREEN_HEIGHT - 150, 1],
+    [900, SCREEN_HEIGHT - 150, 1],
+    [1200, SCREEN_HEIGHT - 150, 1],
+    [600, 360, 0],
+    [660, 360, 0],
+    [730, 360, 0],
+    [1755, 650, 1],
+    [1880, 650, 1],
+    [2210, 550, 1],
+    [2365, 450, 1],
+    [2515, 550, 1],
 ]
 
+var tileMap = new TileMap()
+elements = [ new Player().elem ]
+coins.forEach(c => elements.push( new Coin(c[0], c[1], c[2]).elem ))
+
 tileMap.createTileMap({
-    rect: { x: 50, y: (SCREEN_HEIGHT - 400), w: 50, h: 50 },
+    rect: { x: 50, y: SCREEN_HEIGHT - 450, w: 50, h: 50 },
     tileSize: 8,
     tileMap: [
-        [1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [3, 3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+        [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+        [3, 3, 3, 3, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
     ]
 })
 
@@ -39,9 +56,9 @@ start = () => {
 }
 
 update = () => {
-	// stats.begin();
+	stats.begin();
 	
-    elements.forEach(elem => { elem.update(); Physics.calcCollisions(player.elem, elem) })
+    elements.forEach(elem => { elem.update(); Physics.calcCollisions(elements[0], elem) })
     tileMap.solvePhysics()
 
     elements.forEach(elem => Physics.apply(elem))
@@ -51,7 +68,7 @@ update = () => {
     tileMap.render()
     elements.forEach(elem => elem.render())
     
-	// stats.end();
+	stats.end();
     if(!inLoop) alert('bye!')
     else window.requestAnimationFrame(update)
 }

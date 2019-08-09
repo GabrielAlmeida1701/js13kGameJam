@@ -1,4 +1,4 @@
-function replaceCommunItens(content) {
+function minifyJS(content) {
     var day = new Date()
     var start = day.getMilliseconds()
 
@@ -34,7 +34,7 @@ function replaceCommunItens(content) {
                 .replace(/PhysicsEntity = { STATIC: 0, DYNAMIC: 1 }/g, '')
 
                 //Remove stats ref
-                .replace(/var stats = new Stats\(\);/g, '').replace(/stats.showPanel\(1\);/g, '')
+                .replace(/var stats = new Stats\(\);/g, '').replace(/stats.showPanel\(0\);/g, '')
                 .replace(/document.body.appendChild\(stats.dom\);/g, '').replace(/stats.begin\(\);/g, '').replace(/stats.end\(\);/g, '')
 
     var hour = ("0"+day.getHours()).slice(-2) + ":" + ("0"+day.getMinutes()).slice(-2) + ":" + ("0"+day.getSeconds()).slice(-2)
@@ -48,4 +48,4 @@ function replaceCommunItens(content) {
     return content;
 }
 
-exports.replaceCommunItens = replaceCommunItens
+exports.minifyJS = minifyJS

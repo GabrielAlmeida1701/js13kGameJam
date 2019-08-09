@@ -4,7 +4,7 @@ var gulp          = require('gulp'),
     minifyCSS     = require('gulp-minify-css'),
     minifyJS      = require('gulp-terser'),
     through       = require('through2'),
-    cminify       = require('./minify'),
+    minifier      = require('./minify'),
 
     distPaths = {
         build: 'build',
@@ -38,7 +38,7 @@ function js () {
         .pipe(concat(distPaths.js_build_file))
         .pipe(through.obj(function (file, enc, cb) {
             let content = file.contents.toString()
-            let result = cminify.replaceCommunItens(content)
+            let result = minifier.minifyJS(content)
             file.contents = new Buffer(result)
             
             cb(null, file)
