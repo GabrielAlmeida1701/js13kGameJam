@@ -20,6 +20,7 @@ class JsElement {
         this.rect = { x: 0, y: 0, w: 20, h: 20 }
         this.color = '#fff'
         this.sprite = null
+        var lastPos = []
 
         /** @type {{ dx: number, dy: number, sx: number, sy: number }} */
         this.uv = undefined
@@ -28,8 +29,19 @@ class JsElement {
         this.update = () => {}
         this.render = () => {
             var {x,y,w,h} = this.rect
-            x += WORLD_MATRIX.x
-            y += WORLD_MATRIX.y
+
+            if(!rewind) lastPos.push({ x, y });
+            if(lastPos.length >= 150) lastPos.shift()
+            if(rewind && lastPos.length > 0) {
+                let last = lastPos.pop()
+                x = last.x
+                y = last.y
+            }
+
+            x = (x + WORLD_MATRIX.x) * RATIO
+            y = (y + WORLD_MATRIX.y) * RATIO
+            w *= RATIO
+            h *= RATIO
 
             if(!useSprite && !useAnimation) {
                 Context2D.beginPath()

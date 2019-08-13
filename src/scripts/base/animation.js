@@ -54,10 +54,11 @@ class JsAnimation {
             if(isEmpty(animConfig)) throw Error('No config')
             if(animConfig.ticks > animConfig.ticksInFrame) {
                 animConfig.ticks = 0;
-                animConfig.frame++;
+                animConfig.frame += rewind? 1 : -1;
 
                 if(animConfig.frame >= animConfig.frameCount)
                     animConfig.frame = 0
+                if(animConfig.frame < 0) animConfig.frame = animConfig.frameCount-1
             }
             animConfig.ticks++;
             

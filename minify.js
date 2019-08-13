@@ -26,7 +26,7 @@ function minifyJS(content) {
                 .replace(/airTime/g, 'at')         .replace(/tag/g, 'g')                .replace(/player\b/g, 'p')
                 .replace(/\bcanvas\b/g, 'cv')      .replace(/tileMap/g, 'tm')           .replace(/\bsolve\b/g, 'sv')
                 .replace(/count\b/g, 'c')          .replace(/speed\b/g, 'd')            .replace(/\bsize\b/g, 's')
-                .replace(/findCollision\b/g, 'fc')
+                .replace(/findCollision\b/g, 'fc') .replace(/RATIO/g, 'asp')
                 // .replace(/WORLD_MATRIX\b/g, 'wm')
 
                 .replace(/\bthis\b/g, 'self').replace(/\/\/let self/g, 'let self=this//').replace(/self/g, 's')

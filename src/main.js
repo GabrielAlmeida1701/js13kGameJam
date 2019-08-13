@@ -57,12 +57,16 @@ start = () => {
 
 update = () => {
 	stats.begin();
-	
-    elements.forEach(elem => { elem.update(); Physics.calcCollisions(elements[0], elem) })
-    tileMap.solvePhysics()
-
-    elements.forEach(elem => Physics.apply(elem))
     
+    if(!rewind) elements.forEach(elem => Physics.apply(elem))
+    
+    elements.forEach(elem => {
+        elem.update();
+        if(!rewind) Physics.calcCollisions(elements[0], elem)
+    })
+
+    if(!rewind) tileMap.solvePhysics()
+
     ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
     tileMap.render()

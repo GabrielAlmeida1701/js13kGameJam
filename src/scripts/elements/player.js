@@ -14,13 +14,11 @@ class Player {
         }
 
         this.elem.update = () => {
-            if(isPressed('d')) {
-                rect.x += 5
-                if(rect.x > SCREEN_WIDTH / 2) WORLD_MATRIX.x = -rect.x + (SCREEN_WIDTH / 2)
-            } else if(isPressed('a')) {
-                rect.x -= 5
-                if(rect.x > SCREEN_WIDTH / 2) WORLD_MATRIX.x = -rect.x + (SCREEN_WIDTH / 2)
-            }
+            rewind = isPressed('e')
+            if(isPressed('d')) rect.x += 5
+            else if(isPressed('a')) rect.x -= 5
+
+            if(rect.x > SCREEN_WIDTH / 2) WORLD_MATRIX.x = -rect.x + (SCREEN_WIDTH / 2)
             
             if(!onAir && isPressed('space')) {
                 onAir = true
