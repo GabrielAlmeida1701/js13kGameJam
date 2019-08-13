@@ -7,7 +7,7 @@ class Player {
 
         var rect = this.elem.rect = { x: 105, y: SCREEN_HEIGHT - 300, w: 25, h: 50 }
         var onAir = false
-        var airTime = 20
+        var airTime = 30
 
         this.elem.start = () => {
             this.elem.setSprite('dude')
@@ -24,9 +24,9 @@ class Player {
             
             if(!onAir && isPressed('space')) {
                 onAir = true
-                rect.y -= 5
+                rect.y -= 20
             } else if(onAir) {
-                this.elem.physicalType = PhysicsEntity.STATIC
+                // this.elem.physicalType = PhysicsEntity.STATIC
 
                 rect.y -= airTime
                 airTime--
@@ -36,12 +36,13 @@ class Player {
             if(rect.y > SCREEN_HEIGHT) rect.y = SCREEN_HEIGHT - 400
         }
 
-        this.elem.onCollision = (elem) => {
-            if(elem.name == 'coin') deleteObject(elem)
-            if(elem.tag == 'tile') {
+        /** @param {Collision} coll */
+        this.elem.onCollision = (coll) => {
+            if(coll.collidee.name == 'coin') deleteObject(coll.collidee)
+            if(coll.collidee.tag == 'tile' && coll.direction == PhysicsEntity.COLLISION_BOTTOM) {
                 onAir = false;
-                airTime = 20
-                this.elem.physicalType = PhysicsEntity.DYNAMIC
+                airTime = 30
+                // this.elem.physicalType = PhysicsEntity.DYNAMIC
             }
         }
     }

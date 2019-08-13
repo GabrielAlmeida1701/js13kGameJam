@@ -72,8 +72,8 @@ class JsElement {
         }
 
         /**
-         * @param {JsElement} elem
+         * @param {Collision} coll
          */
-        this.onCollision = (elem) => {}
+        this.onCollision = (coll) => {}
     }
 }

@@ -1,3 +1,4 @@
+//#region PhysicsUtils
 /**
  * @param {JsElement} coll
  * @param {JsElement} other
@@ -22,24 +23,62 @@ isColliding = (coll, other) => {
     // others, then we know that the box cannot be colliding
     return !(b1 < t2 || t1 > b2 || r1 < l2 || l1 > r2)
 }
-findCollision = (collider, collidee) => {
-    if(!isEmpty(collidee)) {
-        let aux = Physics.collisions.findIndex(x => x.collider == collider && x.collidee == collidee)
-        return aux != -1? aux : undefined
-    } else return Physics.collisions.findIndex(x => x.collider == collider || x.collidee == collider)
-}
-Physics = {
 
-    /** @type {Array<{collider:JsElement, collidee:JsElement}>} */
+/** 
+ * @param {Collision|JsElement} collider 
+ * @param {Collision|JsElement} collidee 
+ * */
+findCollision = (collider, collidee) => {
+    if(isEmpty(collider)) return -1;
+
+    let coll = Physics.collisions
+    let c1 = isEmpty(collider.collidee)? collider : collider.collidee
+    let c2 = undefined
+
+    if(!isEmpty(collidee)) {
+        c2 = isEmpty(collidee.collidee)? collidee : collidee.collidee;
+        return coll.findIndex(x => {
+            return  x.collider.collidee == c1 && x.collidee.collidee == c2 ||
+                    x.collider.collidee == c2 && x.collidee.collidee == c1
+        })
+    } else return coll.findIndex(x => x.collider.collidee == c1 || x.collidee.collidee == c1)
+}
+//#endregion
+
+const PhysicsEntity = {
+    STATIC: 0,
+    DYNAMIC: 1,
+
+    COLLISION_TOP: 1,
+    COLLISION_BOTTOM: 2,
+    COLLISION_LEFT: 3,
+    COLLISION_RIGHT: 4,
+}
+
+const Physics = {
+
+    /** @type {Array<{collider:Collision, collidee:Collision}>} */
     collisions: [],
+
+    /** 
+     * @param {Collision} collider 
+     * @param {Collision} collidee 
+     * */
     addCollision: (collider, collidee) => {
         //if needed: onCollisionEnter goes here
-        if(isEmpty(findCollision(collider, collidee))) Physics.collisions.push({collider, collidee})
+        if(findCollision(collider, collidee) == -1) Physics.collisions.push({collider, collidee})
     },
+
+    /** 
+     * @param {Collision} collider 
+     * @param {Collision} collidee 
+     * */
     removeCollision: (collider, collidee) => {
         let aux = findCollision(collider, collidee)
-        if(!isEmpty(aux)) Physics.collisions.splice(aux, 1)
+        if(aux != -1) Physics.collisions.splice(aux, 1)
     },
+
+    /** @param {Collision} collider */
     removeCollRef: (collider) => {
         let aux = findCollision(collider)
         while(aux != -1) {
@@ -53,19 +92,27 @@ Physics = {
      * @param {JsElement} collidee
      */
     calcCollisions: (collider, collidee) => {
-        let solved = Physics.solve(collider, collidee)
+        let { result, collision1, collision2 } = Physics.solve(collider, collidee)
 
-        if(solved == 1) {
-            collider.onCollision(collidee)
-            collidee.onCollision(collider)
-        } else if(solved == 0) {
+        if(result == 1) {
+            collider.onCollision(collision1)
+            collidee.onCollision(collision2)
+        } else if(result == 0) {
             //if needed: onCollisionExit goes here
-            Physics.removeCollision(collider, collidee)
+            Physics.removeCollision(collision1, collision2)
         }
     },
+
+    /** @param {Collision} collider */
     apply: (collider) => {
         let aux = findCollision(collider)
-        if(aux == -1 && collider.physicalType !== PhysicsEntity.STATIC) collider.rect.y += GRAVITY
+        if(aux == -1 && collider.physicalType !== PhysicsEntity.STATIC) {
+            collider.rect.y += GRAVITY
+        } else if (aux != -1) {
+            let coll = Physics.collisions[aux]
+            let obj = collider == coll.collider.collidee? coll.collider : coll.collidee
+            if(obj.direction != PhysicsEntity.COLLISION_BOTTOM) obj.collidee.rect.y += GRAVITY
+        }
     },
 
     /**
@@ -73,8 +120,12 @@ Physics = {
      * @param {JsElement} collidee
      */
     solve: (collider, collidee) => {
-        if(isEmpty(collider) || isEmpty(collidee)|| collider == collidee) return -1
-        if(!isColliding(collider, collidee) ) return 0
+        if(isEmpty(collider) || isEmpty(collidee)|| collider == collidee) return { result: -1 }
+        if(!isColliding(collider, collidee) ) return {
+            result: 0,
+            collision1: collider,
+            collision2: collidee
+        }
 
         let cRect = collider.rect
         let oRect = collidee.rect
@@ -94,20 +145,62 @@ Physics = {
         let absDX = Math.abs(dx),
             absDY = Math.abs(dy)
     
+        let dir = PhysicsEntity.COLLISION_BOTTOM
         if (Math.abs(absDX - absDY) < .1 || absDX > absDY) {
-            if (dx < 0) cRect.x = oRect.x + oRect.w
-            else cRect.x = oRect.x - cRect.w
+            // Collision is on the right
+            if (dx < 0) {
+                cRect.x = oRect.x + oRect.w
+                dir = PhysicsEntity.COLLISION_RIGHT
+            } else {
+                cRect.x = oRect.x - cRect.w
+                dir = PhysicsEntity.COLLISION_LEFT
+            }
+            // Collision is on the left
     
-            if (dy < 0 && cRect.y > mid2.y) cRect.y = oRect.y + oRect.h
-            else if((cRect.y + cRect.h) - oRect.y < 5) cRect.y = oRect.y - cRect.h
+            // Collision is on the top
+            if (dy < 0 && cRect.y > mid2.y) {
+                cRect.y = oRect.y + oRect.h
+                dir = PhysicsEntity.COLLISION_TOP
+            } else if((cRect.y + cRect.h) - oRect.y < 5) {
+                cRect.y = oRect.y - cRect.h
+                dir = PhysicsEntity.COLLISION_BOTTOM
+            }
+            // Collision is on the bottom
         } else {
 
             // If the player is approaching from positive Y
-            if (dy < 0) cRect.y = oRect.y + oRect.h
-            else cRect.y = oRect.y - cRect.h
+            if (dy < 0) {
+                cRect.y = oRect.y + oRect.h
+                dir = PhysicsEntity.COLLISION_TOP
+            } else {
+                cRect.y = oRect.y - cRect.h
+                dir = PhysicsEntity.COLLISION_BOTTOM
+            }
         }
 
-        Physics.addCollision(collider, collidee)
-        return 1
+        let invertDir = PhysicsEntity.COLLISION_BOTTOM;
+        if(dir == PhysicsEntity.COLLISION_BOTTOM) invertDir = PhysicsEntity.COLLISION_TOP
+        else if(dir == PhysicsEntity.COLLISION_TOP) invertDir = PhysicsEntity.COLLISION_BOTTOM
+        else if(dir == PhysicsEntity.COLLISION_LEFT) invertDir = PhysicsEntity.COLLISION_RIGHT
+        else if(dir == PhysicsEntity.COLLISION_RIGHT) invertDir = PhysicsEntity.COLLISION_LEFT
+
+        let collision1 = new Collision(collidee, dir)
+        let collision2 = new Collision(collider, invertDir)
+        Physics.addCollision(collision1, collision2)
+        return {
+            result: 1, collision1, collision2
+        }
+    }
+}
+
+class Collision {
+
+    /**
+     * @param {JsElement} collidee 
+     * @param {number} direction 
+     */
+    constructor(collidee, direction) {
+        this.collidee = collidee;
+        this.direction = direction
     }
 }
