@@ -15,7 +15,7 @@ function minifyJS(content) {
                 .replace(/tileSettings\b/g, 'ts')  .replace(/createTileMap\b/g, 'ctm')  .replace(/\bPhysics\b/g, 'py')
                 .replace(/collisions/g, 'cs')      .replace(/addCollision/g, 'adc')     .replace(/removeCollision/g, 'rc')
                 .replace(/\bname\b/g, 'n')         .replace(/aux\b/g, 'x')              .replace(/physicalType/g, 'pt')
-                .replace(/GRAVITY = 10/g, '')      .replace(/GRAVITY/g, '10')           .replace(/setSprite/g, 'ss')
+                .replace(/const GRAVITY = 10/g, '').replace(/GRAVITY/g, '10')           .replace(/setSprite/g, 'ss')
                 .replace(/start\b/g, 'st')         .replace(/update\b/g, 'up')          .replace(/render\b/g, 'r')
                 .replace(/frame\b/g, 'fr')         .replace(/ticks\b/g, 'tk')           .replace(/frameSize\b/g, 'fs')
                 .replace(/loadImage\b/g, 'l')      .replace(/elem\b/g, 'e')             .replace(/rect(?!\()\b/g, 't')
@@ -31,7 +31,9 @@ function minifyJS(content) {
 
                 .replace(/\bthis\b/g, 'self').replace(/\/\/let self/g, 'let self=this//').replace(/self/g, 's')
                 .replace(/PhysicsEntity.DYNAMIC/g, '1').replace(/PhysicsEntity.STATIC/g, '0')
-                .replace(/PhysicsEntity = { STATIC: 0, DYNAMIC: 1 }/g, '')
+                .replace(/const PhysicsEntity = { STATIC: 0, DYNAMIC: 1 }/g, '')
+                .replace(/RewindLogic.AFFECTED/g, '1').replace(/RewindLogic.STATIC/g, '0')
+                .replace(/const RewindLogic = { STATIC: 0, AFFECTED: 1 }/g, '')
 
                 //Remove stats ref
                 .replace(/var stats = new Stats\(\);/g, '').replace(/stats.showPanel\(0\);/g, '')

@@ -31,7 +31,7 @@ class Player {
                 if(airTime < -20) airTime = -20
             }
 
-            if(rect.y > SCREEN_HEIGHT) rect.y = SCREEN_HEIGHT - 400
+            if(rect.y * RATIO > SCREEN_HEIGHT) gameOver()
         }
 
         this.elem.onCollision = (elem) => {

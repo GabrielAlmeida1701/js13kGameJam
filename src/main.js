@@ -61,11 +61,10 @@ update = () => {
     if(!rewind) elements.forEach(elem => Physics.apply(elem))
     
     elements.forEach(elem => {
-        elem.update();
-        if(!rewind) Physics.calcCollisions(elements[0], elem)
+        elem.callUpdate();
+        Physics.calcCollisions(elements[0], elem)
     })
-
-    if(!rewind) tileMap.solvePhysics()
+    tileMap.solvePhysics()
 
     ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
@@ -73,8 +72,7 @@ update = () => {
     elements.forEach(elem => elem.render())
     
 	stats.end();
-    if(!inLoop) alert('bye!')
-    else window.requestAnimationFrame(update)
+    if(inLoop) window.requestAnimationFrame(update)
 }
 
 inputDown = (event) => {
@@ -98,6 +96,13 @@ deleteObject = (elem) => {
         elements.splice(i, 1)
         Physics.removeCollRef(elem)
     }
+}
+
+gameOver = () => {
+    inLoop = false
+    alert('You lose')
+    alert('The game will restart now')
+    window.location.reload()
 }
 
 start()

@@ -46,6 +46,7 @@ class TileMap {
                             elem.rect = { x, y, w, h }
                             elem.uv = { dx, dy: 0, sx: 8, sy: 8 }
                             elem.setSprite(tileType)
+                            elem.rewindLogic = RewindLogic.STATIC
                             mapsheet.push(elem)
                         }
 

@@ -5,8 +5,9 @@ const RATIO = ((SCREEN_WIDTH + SCREEN_HEIGHT) / 3000) * 1.3;
 const WORLD_MATRIX = { x: 0, y: 0 }
 var rewind = false
 
-GRAVITY = 10
-PhysicsEntity = { STATIC: 0, DYNAMIC: 1 }
+const GRAVITY = 10
+const PhysicsEntity = { STATIC: 0, DYNAMIC: 1 }
+const RewindLogic = { STATIC: 0, AFFECTED: 1 }
 
 /** @type {Array<JsElement>} */
 elements = []
@@ -34,3 +35,4 @@ const isPressed = (key) => {
 
 /** @param {JsElement} elem */
 deleteObject = (elem) => {}
+gameOver = () => {}

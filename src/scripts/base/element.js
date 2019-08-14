@@ -8,6 +8,7 @@ class JsElement {
         this.name = name
         this.tag = isEmpty(tag)? 'object' : tag
         this.physicalType = PhysicsEntity.DYNAMIC
+        this.rewindLogic = RewindLogic.AFFECTED
 
         var useSprite = false
         var useAnimation = false
@@ -27,17 +28,25 @@ class JsElement {
 
         this.start = () => {}
         this.update = () => {}
+
+        this.callUpdate = () => {
+            var {x,y} = this.rect
+
+            if(this.rewindLogic == RewindLogic.AFFECTED) {
+                if(!rewind) lastPos.push({ x, y });
+                if(lastPos.length >= 150) lastPos.shift()
+                if(rewind && lastPos.length > 0) {
+                    let last = lastPos.pop()
+                    this.rect.x = last.x
+                    this.rect.y = last.y
+                }
+            }
+            
+            this.update()
+        }
+
         this.render = () => {
             var {x,y,w,h} = this.rect
-
-            if(!rewind) lastPos.push({ x, y });
-            if(lastPos.length >= 150) lastPos.shift()
-            if(rewind && lastPos.length > 0) {
-                let last = lastPos.pop()
-                x = last.x
-                y = last.y
-            }
-
             x = (x + WORLD_MATRIX.x) * RATIO
             y = (y + WORLD_MATRIX.y) * RATIO
             w *= RATIO
