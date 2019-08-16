@@ -14,12 +14,10 @@ class Player {
         }
 
         this.elem.update = () => {
-            rewind = isPressed('e')
             if(isPressed('d')) rect.x += 5
             else if(isPressed('a')) rect.x -= 5
+            else if(isPressed('s') && !onAir) rect.y++
 
-            if(rect.x > SCREEN_WIDTH / 2) WORLD_MATRIX.x = -rect.x + (SCREEN_WIDTH / 2)
-            
             if(!onAir && isPressed('space')) {
                 onAir = true
                 rect.y -= 5
@@ -31,7 +29,11 @@ class Player {
                 if(airTime < -20) airTime = -20
             }
 
-            if(rect.y * RATIO > SCREEN_HEIGHT) gameOver()
+            if(rect.y * RATIO > SCREEN_HEIGHT * 2) gameOver()
+        }
+
+        this.elem.onRender = () => {
+            if(rect.x > SCREEN_WIDTH / 2) WORLD_MATRIX.x = -rect.x + (SCREEN_WIDTH / 2)
         }
 
         this.elem.onCollision = (elem) => {

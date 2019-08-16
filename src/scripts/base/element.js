@@ -30,6 +30,7 @@ class JsElement {
         this.update = () => {}
 
         this.callUpdate = () => {
+            rewind = isPressed('e')
             var {x,y} = this.rect
 
             if(this.rewindLogic == RewindLogic.AFFECTED) {
@@ -42,10 +43,11 @@ class JsElement {
                 }
             }
             
-            this.update()
+            if(!rewind || this.rewindLogic == RewindLogic.STATIC) this.update()
         }
 
         this.render = () => {
+            this.onRender()
             var {x,y,w,h} = this.rect
             x = (x + WORLD_MATRIX.x) * RATIO
             y = (y + WORLD_MATRIX.y) * RATIO
@@ -96,5 +98,6 @@ class JsElement {
          * @param {JsElement} elem
          */
         this.onCollision = (elem) => {}
+        this.onRender = () => {}
     }
 }

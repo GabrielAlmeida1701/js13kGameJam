@@ -29,7 +29,10 @@ coins = [
 ]
 
 var tileMap = new TileMap()
-elements = [ new Player().elem ]
+elements = [
+    new Player().elem,
+    new Teste(400, 560).elem
+]
 coins.forEach(c => elements.push( new Coin(c[0], c[1], c[2]).elem ))
 
 tileMap.createTileMap({
@@ -90,7 +93,7 @@ inputUp = (event) => {
 }
 
 /** @param {JsElement} elem */
-deleteObject = (elem) => {
+const deleteObject = (elem) => {
     let i = elements.indexOf(elem);
     if(i != -1) {
         elements.splice(i, 1)
@@ -98,10 +101,9 @@ deleteObject = (elem) => {
     }
 }
 
-gameOver = () => {
+const gameOver = () => {
     inLoop = false
-    alert('You lose')
-    alert('The game will restart now')
+    alert('You lose, The game will restart now')
     window.location.reload()
 }
 
